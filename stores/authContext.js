@@ -8,29 +8,35 @@ const AuthContext = createContext({
   authReady: false
 })
 
-// children are, all the other components AuthContextProvider wraps
 export const AuthContextProvider = ({ children }) => {
-    // global user, to be able to track whether a user is logged in
-    const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null)
 
-    useEffect(() => {
+  useEffect(() => {
+    netlifyIdentity.on('login', (user) => {
+      setUser(user)
+      netlifyIdentity.close()
+      console.log('login event')
+    })
+
     // init netlify identity connection
     netlifyIdentity.init()
-    }, [])
 
-    const login = () => {
-        netlifyIdentity.open()
+    return () => {
+      netlifyIdentity.off('login')
     }
+  }, [])
 
-    // passing the login method as well 
-    const context = { user, login }
+  const login = () => {
+    netlifyIdentity.open()
+  }
 
+  const context = { user, login }
 
-    return (
-        <AuthContext.Provider value={context}>
-            { children }
-        </AuthContext.Provider>
-    )
+  return (
+    <AuthContext.Provider value={context}>
+      { children }
+    </AuthContext.Provider>
+  )
 }
 
 export default AuthContext
