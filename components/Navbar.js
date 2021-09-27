@@ -1,7 +1,14 @@
 import Link from 'next/link'
 import Image from 'next/image'
+// need the context and the usecontext hoo to be able to reach the context provided
+import { useContext } from 'react'
+import AuthContext from '../stores/authContext'
 
 export default function Navbar() {
+  // it doesn't have to have the same name but user makes sense here
+  const user = useContext(AuthContext)
+  console.log(user)
+
   return (
     <div className="container">
       <nav>
