@@ -4,7 +4,7 @@ exports.handler = async () => {
     // for viewing later
     console.log('function ran')
 
-    const data = { name: 'mario', age: 35, job: plumber }
+    const data = { name: 'mario', age: 35, job: "plumber" }
 
     return {
         statusCode: 200,
