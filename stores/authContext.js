@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from 'react'
+// will be necessary for logging in with identity
 import netlifyIdentity from 'netlify-identity-widget'
 
 const AuthContext = createContext({
@@ -14,6 +15,8 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     netlifyIdentity.on('login', (user) => {
       setUser(user)
+      // adding this because apparently after the automatic closing of the 
+      // modal there's a weird glitch 
       netlifyIdentity.close()
       console.log('login event')
     })
