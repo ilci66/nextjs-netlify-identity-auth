@@ -12,34 +12,48 @@ const AuthContext = createContext({
 export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null)
 
-  useEffect(() => {
-    netlifyIdentity.on('login', (user) => {
-      setUser(user)
-      // adding this because apparently after the automatic closing of the 
-      // modal there's a weird glitch 
-      netlifyIdentity.close()
-      console.log('login event')
-    })
+    useEffect(() => {
+        netlifyIdentity.on('login', (user) => {
+            setUser(user)
+            // adding this because apparently after the automatic closing of the 
+            // modal there's a weird glitch 
+            netlifyIdentity.close()
+            console.log('login event')
+        })
 
-    // init netlify identity connection
-    netlifyIdentity.init()
+        netlifyIdentity.on('logout', () => {
+            setUser(null);
+            console.log('logout event')
+        })
 
-    return () => {
-      netlifyIdentity.off('login')
+        // init netlify identity connection
+        netlifyIdentity.init()
+
+        // in return unregister these to avoid duplicate code, might not be 
+        // necessray in this case as I'm wrapping my application with it and it's
+        // not going to be mounting on and off much, still good practise to add it 
+        // and memorise it this way
+        return () => {
+            netlifyIdentity.off('login')
+            netlifyIdentity.off('logout')
+        }
+    }, [])
+
+  
+    const login = () => {
+        netlifyIdentity.open()
     }
-  }, [])
+    const logout = () => {
+        netlifyIdentity.logout()
+    }   
 
-  const login = () => {
-    netlifyIdentity.open()
-  }
-
-  const context = { user, login }
-
-  return (
-    <AuthContext.Provider value={context}>
-      { children }
-    </AuthContext.Provider>
-  )
+    const context = { user, login, logout }
+    
+    return (
+        <AuthContext.Provider value={context}>
+        { children }
+        </AuthContext.Provider>
+    )
 }
 
 export default AuthContext
