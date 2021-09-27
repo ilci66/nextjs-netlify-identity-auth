@@ -7,7 +7,7 @@ import AuthContext from '../stores/authContext'
 export default function Navbar() {
   // it doesn't have to have the same name but user makes sense here
   const user = useContext(AuthContext)
-  console.log(user)
+  console.log("user ==>", user)
 
   return (
     <div className="container">
